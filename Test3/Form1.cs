@@ -13,13 +13,6 @@ using WMPLib;
 namespace Test3
 {
 
-    public static class Status
-    {
-
-        public static bool playingStatus;
-    }
-
-
     public partial class Form1 : Form
     {
         public Form1()
@@ -29,15 +22,15 @@ namespace Test3
 
         public bool isPlaying = false;
 
-        public DateTime firstPlayTimeHours = DateTime.MinValue;
-        public DateTime firstPlayTimeDate = DateTime.MinValue;
+        public DateTime startTime;
+        public DateTime endTime;
 
-        public int parsedfPlayTime;
-        public int 
+        List<double> times = new List<double>();
+
 
         private void openBtn_Click(object sender, EventArgs e)
         {
-            using (OpenFileDialog ofd = new OpenFileDialog() { Multiselect = true, ValidateNames = true, Filter = "MP4|*.mp4|WMV|*.wmv|WAV|*.wav|MP3|*.mp3|MKV|*.mkv" })
+            using (OpenFileDialog ofd = new OpenFileDialog() { Multiselect = true, ValidateNames = true, Filter = "WAV|*.wav|MP4|*.mp4|WMV|*.wmv|MP3|*.mp3|MKV|*.mkv" })
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
                     List<MediaFile> files = new List<MediaFile>();
@@ -61,11 +54,7 @@ namespace Test3
                 wmpPlayer.URL = file.Path;
                 wmpPlayer.Ctlcontrols.play();
                 isPlaying = true;
-
-                firstPlayTimeHours = DateTime.Now;
-                firstPlayTimeDate = DateTime.Now;
-
-                parsedfPlayTime = int.Parse(firstPlayTimeHours.ToString("hhmmss"));
+                startTime = DateTime.Now;
             }
 
         }
@@ -76,19 +65,6 @@ namespace Test3
             listFile.ValueMember = "Path";
             listFile.DisplayMember = "FileName";
 
-            if (wmpPlayer.playState == WMPPlayState.wmppsPlaying)
-            {
-                Status.playingStatus = true;
-            }
-            else
-            {
-                Status.playingStatus = false;
-            }
-
-            if(Status.playingStatus == true)
-            {
-                
-            }
 
         }
 
@@ -96,23 +72,37 @@ namespace Test3
 
         private void spacePauseEvent(object sender, AxWMPLib._WMPOCXEvents_KeyUpEvent e)
         {
+
             if (isPlaying == true)
             {
                 if (e.nKeyCode == 32 || e.nKeyCode == 13)
                 {
                     wmpPlayer.Ctlcontrols.pause();
                     isPlaying = false;
+                    endTime = DateTime.Now;
                 }
             }
-            else if (isPlaying == false)
+
+            CalculateTime(startTime, endTime);
+
+            if (isPlaying == false)
             {
                 if (e.nKeyCode == 32 || e.nKeyCode == 13)
                 {
                     wmpPlayer.Ctlcontrols.play();
                     isPlaying = true;
+                    startTime = DateTime.Now;
                 }
             }
+        }
 
+        private void CalculateTime(DateTime startTime, DateTime endTime)
+        {
+            TimeSpan inSeconds = endTime - startTime;
+            double elapsedTime = inSeconds.TotalSeconds;
+            times.Add(elapsedTime);
+            MessageBox.Show(elapsedTime.ToString());
+            inSeconds = TimeSpan.Zero;
         }
 
         private void speedUpDownHandler_Click(object sender, EventArgs e)
