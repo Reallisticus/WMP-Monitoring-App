@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WMPLib;
 using System.Threading;
+using System.Data.SqlClient;
 
 namespace Test3
 {
@@ -19,6 +20,7 @@ namespace Test3
         public Form1()
         {
             InitializeComponent();
+            
         }
 
         public bool isPlaying = false;
@@ -27,6 +29,8 @@ namespace Test3
         public DateTime endTime;
 
         List<double> times = new List<double>();
+        public static string PCname = Environment.MachineName;
+        string name = "Scott";
 
 
         private void openBtn_Click(object sender, EventArgs e)
@@ -95,6 +99,13 @@ namespace Test3
 
         private void CalculateTime(DateTime startTime, DateTime endTime)
         {
+            string connetionString;
+            SqlConnection cnn;
+            //Data Source=PC-PROGRAMMING\SQLEXPRESS;Initial Catalog=PlayerTest;Integrated Security=True
+            connetionString = @"Data Source=PC-PROGRAMMING\SQLEXPRESS;Initial Catalog=PlayerTest;Integrated Security=True";
+            cnn = new SqlConnection(connetionString);
+            cnn.Open();
+
             double totalTime = 0;
             TimeSpan inSeconds = endTime - startTime;
             double elapsedTime = inSeconds.TotalSeconds;
@@ -107,8 +118,11 @@ namespace Test3
             }
 
             TimeSpan time = TimeSpan.FromSeconds(totalTime);
-
-            MessageBox.Show(time.ToString("HH"));
+            String st = "INSERT INTO Agents(PCName, Name) values (@PCName, @Name)";
+            SqlCommand cmd = new SqlCommand(st, cnn);
+            cmd.Parameters.AddWithValue("@PCName", PCname);
+            cmd.Parameters.AddWithValue("@Name", name);
+            cmd.ExecuteNonQuery();
             inSeconds = TimeSpan.Zero;
         }
 
