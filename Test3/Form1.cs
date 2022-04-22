@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WMPLib;
+using System.Threading;
 
 namespace Test3
 {
@@ -53,7 +54,6 @@ namespace Test3
             {
                 wmpPlayer.URL = file.Path;
                 wmpPlayer.Ctlcontrols.play();
-                isPlaying = true;
                 startTime = DateTime.Now;
             }
 
@@ -73,24 +73,21 @@ namespace Test3
         private void spacePauseEvent(object sender, AxWMPLib._WMPOCXEvents_KeyUpEvent e)
         {
 
-            if (isPlaying == true)
+            if (wmpPlayer.playState == WMPPlayState.wmppsPlaying)
             {
                 if (e.nKeyCode == 32 || e.nKeyCode == 13)
                 {
                     wmpPlayer.Ctlcontrols.pause();
-                    isPlaying = false;
                     endTime = DateTime.Now;
                 }
+                CalculateTime(startTime, endTime);
             }
 
-            CalculateTime(startTime, endTime);
-
-            if (isPlaying == false)
+            else if (isPlaying == false)
             {
                 if (e.nKeyCode == 32 || e.nKeyCode == 13)
                 {
                     wmpPlayer.Ctlcontrols.play();
-                    isPlaying = true;
                     startTime = DateTime.Now;
                 }
             }
@@ -98,10 +95,20 @@ namespace Test3
 
         private void CalculateTime(DateTime startTime, DateTime endTime)
         {
+            double totalTime = 0;
             TimeSpan inSeconds = endTime - startTime;
             double elapsedTime = inSeconds.TotalSeconds;
             times.Add(elapsedTime);
-            MessageBox.Show(elapsedTime.ToString());
+
+
+            for (int i = 0; i < times.Count; i++)
+            {
+                totalTime += times[i];
+            }
+
+            TimeSpan time = TimeSpan.FromSeconds(totalTime);
+
+            MessageBox.Show(time.ToString("HH"));
             inSeconds = TimeSpan.Zero;
         }
 
@@ -125,5 +132,6 @@ namespace Test3
                 wmpPlayer.settings.rate = newRate;
             }
         }
+
     }
 }

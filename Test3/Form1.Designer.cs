@@ -28,12 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.wmpPlayer = new AxWMPLib.AxWindowsMediaPlayer();
             this.openBtn = new System.Windows.Forms.Button();
             this.listFile = new System.Windows.Forms.ListBox();
             this.speedUpDownHandler = new System.Windows.Forms.NumericUpDown();
             this.lblAdjSpeed = new System.Windows.Forms.Label();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.wmpPlayer)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.speedUpDownHandler)).BeginInit();
             this.SuspendLayout();
@@ -107,6 +109,10 @@
             this.lblAdjSpeed.TabIndex = 4;
             this.lblAdjSpeed.Text = "Adjust Speed";
             // 
+            // timer1
+            // 
+            this.timer1.Interval = 30000;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -134,6 +140,7 @@
         private System.Windows.Forms.ListBox listFile;
         private System.Windows.Forms.NumericUpDown speedUpDownHandler;
         private System.Windows.Forms.Label lblAdjSpeed;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 
