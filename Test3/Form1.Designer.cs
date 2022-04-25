@@ -53,6 +53,7 @@
             this.wmpPlayer.Size = new System.Drawing.Size(811, 455);
             this.wmpPlayer.TabIndex = 0;
             this.wmpPlayer.KeyUpEvent += new AxWMPLib._WMPOCXEvents_KeyUpEventHandler(this.spacePauseEvent);
+            this.wmpPlayer.Enter += new System.EventHandler(this.wmpPlayer_Enter);
             // 
             // openBtn
             // 

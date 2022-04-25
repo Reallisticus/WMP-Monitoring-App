@@ -1,39 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data.SqlClient;
 
 namespace Test3
 {
-    public class Database
+    internal class Database
     {
-        private string connetionString;
+        public string connectionString = @"Data Source=PC-PROGRAMMING\SQLEXPRESS;Initial Catalog=PlayerTest;Integrated Security=True";
 
-        public string ConnectionString
+        //public Database(string connectionString)
+        //{
+        //    this.connectionString = connectionString;
+        //}
+
+        internal SqlConnection Connect()
         {
-            get { return connectionString; }
-            set { ConnectionString = value; }
+            SqlConnection cnn;
+            string connect = this.connectionString;
+            cnn = new SqlConnection(connectionString);
+            cnn.Open();
+            return cnn;
         }
 
+        internal void PushToBase(string PCName, double elapsedTime, DateTime endTime, SqlConnection cnn)
+        {
+            string st = "insert into agents(pcname, elapsed time, date) values (@pcname, @elapsedTime, @endTime)";
+            SqlCommand cmd = new SqlCommand(st, cnn);
+            cmd.Parameters.AddWithValue("@pcname", PCName);
+            cmd.Parameters.AddWithValue("@totalTime", elapsedTime);
+            cmd.Parameters.AddWithValue("@date", endTime);
+            cmd.ExecuteNonQuery();
+        }
     }
 
-    public void ConnectDatabase(string connectionString)
-    {
-        SqlConnection cnn;
-        //Data Source=PC-PROGRAMMING\SQLEXPRESS;Initial Catalog=PlayerTest;Integrated Security = True;
-        connectionString = @"Data Source=PC-PROGRAMMING\SQLEXPRESS;Initial Catalog=PlayerTest;Integrated Security=True";
-        cnn = new SqlConnection(connectionString);
-        cnn.Open();
-    }
-
-    private void PushToBase(string PCName, double elapsedTime, DateTime date)
-    {
-        String st = "INSERT INTO Listened Time(PCName, Elapsed Time, Date) values (@PCName, @elapsedTime, @date)";
-        SqlCommand cmd = new SqlCommand(st, cnn);
-        cmd.Parameters.AddWithValue("@PCName", PCName);
-        cmd.Parameters.AddWithValue("@elapsed Time", elapsedTime);
-        cmd.Parameters.AddWithValue("@date", date);
-        cmd.ExecuteNonQuery();
-    }
 }

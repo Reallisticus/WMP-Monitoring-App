@@ -17,20 +17,21 @@ namespace Test3
 
     public partial class Form1 : Form
     {
+        public bool isPlaying = false;
+        public DateTime startTime;
+        public DateTime endTime;
+       // string connectionString = @"Data Source=PC-PROGRAMMING\SQLEXPRESS;Initial Catalog=PlayerTest;Integrated Security=True";
+        Database db = new Database();
+
+        List<double> times = new List<double>();
+        public static string PCName = Environment.MachineName;
+
         public Form1()
         {
             InitializeComponent();
             
         }
 
-        public bool isPlaying = false;
-
-        public DateTime startTime;
-        public DateTime endTime;
-
-        List<double> times = new List<double>();
-        public static string PCName = Environment.MachineName;
-        string name = "Scott";
 
 
         private void openBtn_Click(object sender, EventArgs e)
@@ -49,8 +50,6 @@ namespace Test3
 
         }
 
-
-
         private void listFile_SelectedIndexChanged(object sender, EventArgs e)
         {
             MediaFile file = listFile.SelectedItem as MediaFile;
@@ -60,23 +59,18 @@ namespace Test3
                 wmpPlayer.Ctlcontrols.play();
                 startTime = DateTime.Now;
             }
-
         }
-
 
         private void Form1_Load(object sender, EventArgs e)
         {
             listFile.ValueMember = "Path";
             listFile.DisplayMember = "FileName";
-
-
         }
 
 
 
         private void spacePauseEvent(object sender, AxWMPLib._WMPOCXEvents_KeyUpEvent e)
         {
-
             if (wmpPlayer.playState == WMPPlayState.wmppsPlaying)
             {
                 if (e.nKeyCode == 32 || e.nKeyCode == 13)
@@ -99,37 +93,24 @@ namespace Test3
 
         private void CalculateTime(DateTime startTime, DateTime endTime)
         {
-            double totalTime = 0;
+            double elapsedTime = 0;
             TimeSpan inSeconds = endTime - startTime;
             double totalTime = inSeconds.TotalSeconds;
             times.Add(totalTime);
+            elapsedTime = times.Sum(x => x);
 
+            //foreach (var item in times)
+            //{
+            //    MessageBox.Show(item.ToString());
+            //}
 
-            for (int i = 0; i < times.Count; i++)
-            {
-                totalTime += times[i];
-            }
+            MessageBox.Show(elapsedTime.ToString());
 
-            /* SqlConnection cnn;
-            //Data Source=PC-PROGRAMMING\SQLEXPRESS;Initial Catalog=PlayerTest;Integrated Security=True */
-            //cnn = new SqlConnection(connetionString);
-            //cnn.Open(); 
-            //SqlConnection cnn;
-            string connectionString = @"Data Source=PC-PROGRAMMING\SQLEXPRESS;Initial Catalog=PlayerTest;Integrated Security=True";
-
-            Database db = new Database();
-            Database.ConnectDatabase(connectionString);
-
-
-            //TimeSpan time = TimeSpan.FromSeconds(totalTime);
-            //String st = "INSERT INTO Agents(PCName, Name) values (@PCName, @Name)"; 
-            //SqlCommand cmd = new SqlCommand(st, cnn);
-            //cmd.Parameters.AddWithValue("@PCName", PCname);
-           // cmd.Parameters.AddWithValue("@Name", name);
-            //cmd.ExecuteNonQuery();
-
-            PushToBase(PCName, totalTime, endTime);
+            var cnn = db.Connect();
+            TimeSpan time = TimeSpan.FromSeconds(elapsedTime);
+            db.PushToBase(PCName, elapsedTime, endTime, cnn);
             inSeconds = TimeSpan.Zero;
+
         }
 
         private void speedUpDownHandler_Click(object sender, EventArgs e)
@@ -153,7 +134,9 @@ namespace Test3
             }
         }
 
+        private void wmpPlayer_Enter(object sender, EventArgs e)
+        {
 
-
+        }
     }
 }
