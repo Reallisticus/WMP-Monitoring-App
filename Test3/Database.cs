@@ -5,7 +5,7 @@ namespace Test3
 {
     internal class Database
     {
-        public string connectionString = @"Data Source=PC-PROGRAMMING\SQLEXPRESS;Initial Catalog=PlayerTest;Integrated Security=True";
+        public string connectionString = @"data source=PC-PROGRAMMING\SQLEXPRESS;initial catalog=WMPlayer;trusted_connection=true";
 
         //public Database(string connectionString)
         //{
@@ -21,13 +21,14 @@ namespace Test3
             return cnn;
         }
 
-        internal void PushToBase(string PCName, double elapsedTime, DateTime endTime, SqlConnection cnn)
+        internal void PushToBase(string PCName, double totalTime, string date, SqlConnection cnn)
         {
-            string st = "insert into agents(pcname, elapsed time, date) values (@pcname, @elapsedTime, @endTime)";
+            totalTime = Math.Round(totalTime, 2);
+            string st = "insert into Time (PCName, ElapsedTime, Date) values (@PCName, @ElapsedTime, @Date)";
             SqlCommand cmd = new SqlCommand(st, cnn);
-            cmd.Parameters.AddWithValue("@pcname", PCName);
-            cmd.Parameters.AddWithValue("@totalTime", elapsedTime);
-            cmd.Parameters.AddWithValue("@date", endTime);
+            cmd.Parameters.AddWithValue("@PCName", PCName);
+            cmd.Parameters.AddWithValue("@ElapsedTime", totalTime);
+            cmd.Parameters.AddWithValue("@Date", date);
             cmd.ExecuteNonQuery();
         }
     }

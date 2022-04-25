@@ -24,7 +24,7 @@ namespace Test3
         Database db = new Database();
 
         List<double> times = new List<double>();
-        public static string PCName = Environment.MachineName;
+        public static string PCName = Environment.MachineName.ToString();
 
         public Form1()
         {
@@ -108,7 +108,8 @@ namespace Test3
 
             var cnn = db.Connect();
             TimeSpan time = TimeSpan.FromSeconds(elapsedTime);
-            db.PushToBase(PCName, elapsedTime, endTime, cnn);
+            string date = endTime.ToString("dd-MM-yyyy");
+            db.PushToBase(PCName, totalTime, date, cnn);
             inSeconds = TimeSpan.Zero;
 
         }
@@ -132,11 +133,6 @@ namespace Test3
             {
                 wmpPlayer.settings.rate = newRate;
             }
-        }
-
-        private void wmpPlayer_Enter(object sender, EventArgs e)
-        {
-
         }
     }
 }
