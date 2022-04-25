@@ -29,7 +29,7 @@ namespace Test3
         public DateTime endTime;
 
         List<double> times = new List<double>();
-        public static string PCname = Environment.MachineName;
+        public static string PCName = Environment.MachineName;
         string name = "Scott";
 
 
@@ -99,17 +99,10 @@ namespace Test3
 
         private void CalculateTime(DateTime startTime, DateTime endTime)
         {
-            string connetionString;
-            SqlConnection cnn;
-            //Data Source=PC-PROGRAMMING\SQLEXPRESS;Initial Catalog=PlayerTest;Integrated Security=True
-            connetionString = @"Data Source=PC-PROGRAMMING\SQLEXPRESS;Initial Catalog=PlayerTest;Integrated Security=True";
-            cnn = new SqlConnection(connetionString);
-            cnn.Open();
-
             double totalTime = 0;
             TimeSpan inSeconds = endTime - startTime;
-            double elapsedTime = inSeconds.TotalSeconds;
-            times.Add(elapsedTime);
+            double totalTime = inSeconds.TotalSeconds;
+            times.Add(totalTime);
 
 
             for (int i = 0; i < times.Count; i++)
@@ -117,12 +110,25 @@ namespace Test3
                 totalTime += times[i];
             }
 
-            TimeSpan time = TimeSpan.FromSeconds(totalTime);
-            String st = "INSERT INTO Agents(PCName, Name) values (@PCName, @Name)";
-            SqlCommand cmd = new SqlCommand(st, cnn);
-            cmd.Parameters.AddWithValue("@PCName", PCname);
-            cmd.Parameters.AddWithValue("@Name", name);
-            cmd.ExecuteNonQuery();
+            /* SqlConnection cnn;
+            //Data Source=PC-PROGRAMMING\SQLEXPRESS;Initial Catalog=PlayerTest;Integrated Security=True */
+            //cnn = new SqlConnection(connetionString);
+            //cnn.Open(); 
+            //SqlConnection cnn;
+            string connectionString = @"Data Source=PC-PROGRAMMING\SQLEXPRESS;Initial Catalog=PlayerTest;Integrated Security=True";
+
+            Database db = new Database();
+            Database.ConnectDatabase(connectionString);
+
+
+            //TimeSpan time = TimeSpan.FromSeconds(totalTime);
+            //String st = "INSERT INTO Agents(PCName, Name) values (@PCName, @Name)"; 
+            //SqlCommand cmd = new SqlCommand(st, cnn);
+            //cmd.Parameters.AddWithValue("@PCName", PCname);
+           // cmd.Parameters.AddWithValue("@Name", name);
+            //cmd.ExecuteNonQuery();
+
+            PushToBase(PCName, totalTime, endTime);
             inSeconds = TimeSpan.Zero;
         }
 
@@ -146,6 +152,8 @@ namespace Test3
                 wmpPlayer.settings.rate = newRate;
             }
         }
+
+
 
     }
 }
